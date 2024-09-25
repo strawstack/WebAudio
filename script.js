@@ -47,8 +47,9 @@
     }
 
     async function main() {
-        const hash = sha256("test");
+        // const hash = sha256("test");
         const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+
         const play = makePlay(synth);
         const notes = "CDEFG";
         for (let i=0; i < notes.length; i++) {
