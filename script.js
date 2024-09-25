@@ -16,7 +16,6 @@
         for (let i=0; i < notes.length; i++) {
             lookup[notes[i]] = fz[i];
         }
-        console.log(lookup)
         return lookup;
     })();
     
@@ -38,11 +37,23 @@
         return [base, y, z];
     }
 
-    function main() {
+    function makePlay(synth) {
+        return (chord, duration) => {
+            return new Promise((res, _) => {
+                synth.triggerAttackRelease(chord, duration);
+                setTimeout(res, duration * 1000);
+            });
+        };
+    }
+
+    async function main() {
+        const hash = sha256("test");
         const synth = new Tone.PolySynth(Tone.Synth).toDestination();
-        const chord = major("D", 2);
-        console.log(chord);
-        synth.triggerAttackRelease(chord, 2);
+        const play = makePlay(synth);
+        const notes = "CDEFG";
+        for (let i=0; i < notes.length; i++) {
+            await play(major(notes[i], 2), 1);
+        }
     }
 
     document.body.addEventListener("click", e => {
