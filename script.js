@@ -46,9 +46,37 @@
         };
     }
 
+    function toneEvent(synth) {
+
+    }
+
     async function main() {
+
+        await Tone.start();
+
         // const hash = sha256("test");
         const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+
+        const chordEvent = new Tone.ToneEvent(((time, chord) => {
+            // the chord as well as the exact time of the event
+            // are passed in as arguments to the callback function
+            synth.triggerAttackRelease(chord, 0.5, time);
+        }), ["D4", "E4", "F4"]);
+        // start the chord at the beginning of the transport timeline
+        chordEvent.start();
+        // loop it every measure for 8 measures
+        chordEvent.loop = 8;
+        chordEvent.loopEnd = "1m";
+        
+        //play a note every quarter-note
+        const loopA = new Tone.Loop((time) => {
+            synth.triggerAttackRelease("C2", "8n", time);
+        }, "4n").start(0);
+
+        // all loops start when the Transport is started
+        Tone.getTransport().start();
+        // ramp up to 800 bpm over 10 seconds
+        Tone.getTransport().bpm.rampTo(800, 10);
 
         const play = makePlay(synth);
         const notes = "CDEFG";
